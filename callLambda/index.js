@@ -14,7 +14,7 @@ const invokeLambda = (lambda, params) => new Promise((resolve, reject) => {
 
 exports.handler = async () => {
     const params = {
-        FunctionName: 'makeFileLambda',
+        FunctionName: 'make_file_lambda',
     };
 
     const result = await invokeLambda(lambda, params);
