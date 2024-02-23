@@ -4,14 +4,9 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
-resource "random_pet" "lambda_bucket_name" {
-  prefix = "stourage"
-  length = 4
-}
-
 # Create bucket
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = random_pet.lambda_bucket_name.id
+  bucket = "stourage-ultimately-smoothly-helping-dove"
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_bucket" {

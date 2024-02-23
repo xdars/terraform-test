@@ -10,7 +10,7 @@ exports.handler = async () => {
 
         const content = 'Hello, World!';
 
-        const bucketName = 'stourage-preferably-virtually-star-seal';
+        const bucketName = 'stourage-ultimately-smoothly-helping-dove';
         const key = filename;
 
         await s3.putObject({
