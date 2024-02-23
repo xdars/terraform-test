@@ -57,3 +57,49 @@ resource "aws_s3_object" "lambda_makeFileLambda" {
 
   etag = filemd5(data.archive_file.lambda_makeFileLambda.output_path)
 }
+
+
+# Create lambda functions
+resource "aws_iam_role" "lambda_exec" {
+  name = "another_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Sid    = ""
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_lambda_function" "call_lambda" {
+  function_name = "call_lambda_function"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_callLambda.key
+
+  runtime = "nodejs16.x"
+  handler = "index.handler"
+
+  source_code_hash = data.archive_file.lambda_callLambda.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+}
+
+resource "aws_lambda_function" "make_file_lambda" {
+  function_name = "make_file_lambda"
+
+  s3_bucket = aws_s3_bucket.lambda_bucket.id
+  s3_key    = aws_s3_object.lambda_makeFileLambda.key
+
+  runtime = "nodejs16.x"
+  handler = "index.handler"
+
+  source_code_hash = data.archive_file.lambda_makeFileLambda.output_base64sha256
+
+  role = aws_iam_role.lambda_exec.arn
+}
