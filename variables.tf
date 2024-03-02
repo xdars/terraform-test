@@ -5,3 +5,7 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+
+variable "s3_name" {
+  default = "stourage-ultimately-smoothly-helping-dove"
+}
