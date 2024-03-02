@@ -21,4 +21,9 @@ exports.handler = async () => {
 
     console.log('Success!');
     console.log(result);
+
+    return {
+        statusCode: 500,
+        body: JSON.stringify({ message: 'Anyway okay' }),
+    };
 }
