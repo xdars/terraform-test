@@ -4,9 +4,11 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+# Save environment
+
 # Create bucket
 resource "aws_s3_bucket" "the_bucket" {
-  bucket = var.s3_name
+  bucket = "stourage2-ultimately-smoothly-helping-dove"
 }
 
 resource "aws_s3_bucket_ownership_controls" "the_bucket" {
@@ -64,6 +66,7 @@ data "archive_file" "lambda_callLambda" {
   type        = "zip"
   source_dir  = "${path.module}/callLambda"
   output_path = "${path.module}/callLambda.zip"
+
 }
 
 data "archive_file" "lambda_makeFileLambda" {
@@ -79,6 +82,9 @@ resource "aws_s3_object" "lambda_callLambda" {
   source = data.archive_file.lambda_callLambda.output_path
 
   etag = filemd5(data.archive_file.lambda_callLambda.output_path)
+  tags = {
+    env = local.environment
+  }
 }
 
 resource "aws_s3_object" "lambda_makeFileLambda" {
@@ -157,7 +163,7 @@ resource "aws_iam_role_policy_attachment" "attach-lambda-policies" {
 }
 
 resource "aws_lambda_function" "call_lambda" {
-  function_name = "call_lambda_function"
+  function_name = local.call_lambda_name
 
   s3_bucket = aws_s3_bucket.the_bucket.id
   s3_key    = aws_s3_object.lambda_callLambda.key
@@ -171,7 +177,7 @@ resource "aws_lambda_function" "call_lambda" {
 }
 
 resource "aws_lambda_function" "make_file_lambda" {
-  function_name = "make_file_lambda"
+  function_name = local.make_file_lambda_name
 
   s3_bucket = aws_s3_bucket.the_bucket.id
   s3_key    = aws_s3_object.lambda_makeFileLambda.key
@@ -187,13 +193,13 @@ resource "aws_lambda_function" "make_file_lambda" {
 # API gateway
 
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "api_gateway"
+  name          = local.api_gateway_name
   protocol_type = "HTTP"
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
-  name   = "api_gateway_stage"
+  name   = local.api_gateway_stage_name
 
   auto_deploy = true
   access_log_settings {
