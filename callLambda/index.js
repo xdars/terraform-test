@@ -13,8 +13,13 @@ const invokeLambda = (lambda, params) => new Promise((resolve, reject) => {
 });
 
 exports.handler = async () => {
+    var envFuncName = process.env.AWS_LAMBDA_FUNCTION_NAME;
+    var funcName = "prd-make-file-lambda";
+    if (envFuncName == 'dev-call-lambda')
+        funcName = "dev-make-file-lambda"
+
     const params = {
-        FunctionName: 'make_file_lambda',
+        FunctionName: funcName,
     };
 
     const result = await invokeLambda(lambda, params);
